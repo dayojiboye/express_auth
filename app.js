@@ -7,6 +7,9 @@ const logger = require("morgan");
 require("dotenv").config();
 
 const indexRouter = require("./routes/index");
+const authRouter = require("./routes/authRoutes");
+const profileRouter = require("./routes/profileRoutes");
+const { validateToken } = require("./middleware/validateTokenHandler");
 
 const app = express();
 
@@ -21,8 +24,19 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
+// Database connection
+mongoose
+	.connect(process.env.DB_URI)
+	.then((result) => {
+		app.listen(process.env.PORT);
+		console.log(`Connected to DB at port ${process.env.PORT}`);
+	})
+	.catch((err) => console.log(err));
+
 // Routes
 app.use("/", indexRouter);
+app.use(authRouter);
+app.use("/profile", validateToken, profileRouter);
 
 // Catch 404 and forward to error handler
 app.use(function (req, res, next) {
