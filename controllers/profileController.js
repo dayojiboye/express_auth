@@ -1,4 +1,10 @@
-const { userResponse, statusCodes, defaultSuccessMessage } = require("../constants");
+const {
+	userResponse,
+	statusCodes,
+	defaultSuccessMessage,
+	forbiddenErrorMessage,
+	serverErrorMessage,
+} = require("../constants");
 const { followOrUnfollowEnums } = require("../enums");
 const User = require("../models/user");
 const updateFollowers = require("../utils/updateFollowersHandler");
@@ -43,13 +49,34 @@ const followOrUnfollowUser = async (req, res) => {
 			res.status(statusCodes.SUCCESSFUL).json({ message: defaultSuccessMessage, data });
 		})
 		.catch((err) => {
-			console.log(err);
 			res.status(statusCodes.NOT_FOUND).json({ message: "User not found" });
 		});
 };
 
-const deleteAccount = (req, res) => {
-	res.send("You deleted your account");
+const deleteAccount = async (req, res) => {
+	const userId = req.params.id;
+	const { _id } = res.locals.user;
+	const { reason } = req.body;
+
+	if (userId !== _id.toString()) {
+		res.status(statusCodes.FORBIDDEN).json({ message: forbiddenErrorMessage });
+	}
+
+	if (!reason) {
+		res.status(statusCodes.VALIDATION_ERROR).json({ message: "Reason field is required" });
+	}
+
+	try {
+		const data = await User.findByIdAndDelete(userId);
+		res.status(statusCodes.SUCCESSFUL).json({
+			message: defaultSuccessMessage,
+			data: {
+				id: data._id,
+			},
+		});
+	} catch (error) {
+		res.status(statusCodes.SERVER_ERROR).json({ message: serverErrorMessage });
+	}
 };
 
 module.exports = {
