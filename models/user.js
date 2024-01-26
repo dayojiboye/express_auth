@@ -39,12 +39,8 @@ const userSchema = new mongoose.Schema(
 			type: String,
 			required: [true, "Please enter an occupation"],
 		},
-		likes: {
-			type: Number,
-			required: [true],
-		},
-		dislikes: {
-			type: Number,
+		followers: {
+			type: Array,
 			required: [true],
 		},
 	},

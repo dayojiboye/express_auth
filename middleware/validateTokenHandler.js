@@ -20,7 +20,7 @@ module.exports.validateToken = function (req, res, next) {
 				}
 			});
 		} else {
-			res.status(statusCodes.UNAUTHORIZED).json({ message: badTokenFormatMessage });
+			res.status(statusCodes.FORBIDDEN).json({ message: badTokenFormatMessage });
 		}
 	} else {
 		res.status(statusCodes.FORBIDDEN).json({ message: badTokenFormatMessage });

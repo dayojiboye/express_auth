@@ -16,19 +16,12 @@ const createToken = (id) => {
 };
 
 const register = async (req, res) => {
-	const { firstName, lastName, username, email, password, bio, occupation } = req.body;
+	// const { firstName, lastName, username, email, password, bio, occupation } = req.body;
 
 	try {
 		const user = await User.create({
-			firstName,
-			lastName,
-			username,
-			email,
-			password,
-			bio,
-			occupation,
-			likes: 0,
-			dislikes: 0,
+			...req.body,
+			followers: [],
 		});
 		const accessToken = createToken(user._id);
 		// res.cookie("accessToken", accessToken, { httpOnly: true, secure: true, maxAge: maxAge * 1000 });

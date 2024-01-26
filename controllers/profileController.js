@@ -16,8 +16,8 @@ const getUserById = async (req, res, next) => {
 	}
 };
 
-const likeOrDislikeProfile = (req, res) => {
-	res.send("You liked/disliked Foo's profile");
+const followOrUnfollowUser = (req, res) => {
+	res.send("You followed/unfollowed Foo's profile");
 };
 
 const deleteAccount = (req, res) => {
@@ -26,6 +26,6 @@ const deleteAccount = (req, res) => {
 
 module.exports = {
 	getUserById,
-	likeOrDislikeProfile,
+	followOrUnfollowUser,
 	deleteAccount,
 };
