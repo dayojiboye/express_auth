@@ -1,8 +1,9 @@
 const { userResponse, statusCodes, defaultSuccessMessage } = require("../constants");
 const { followOrUnfollowEnums } = require("../enums");
 const User = require("../models/user");
+const updateFollowers = require("../utils/updateFollowersHandler");
 
-const getUserById = async (req, res, next) => {
+const getUserById = async (req, res) => {
 	const userId = req.params.id;
 
 	try {
@@ -34,30 +35,10 @@ const followOrUnfollowUser = async (req, res) => {
 		return;
 	}
 
-	User.findByIdAndUpdate(
-		userId,
-		{
-			$pull:
-				type === followOrUnfollowEnums.UNFOLLOW
-					? {
-							followers: {
-								id: _id,
-							},
-					  }
-					: {},
-
-			$addToSet:
-				type === followOrUnfollowEnums.FOLLOW
-					? {
-							followers: {
-								name: firstName + " " + lastName,
-								id: _id,
-							},
-					  }
-					: {},
-		},
-		{ new: true, upsert: true }
-	)
+	User.findByIdAndUpdate(userId, updateFollowers(type, firstName, lastName, _id), {
+		new: true,
+		upsert: true,
+	})
 		.then((data) => {
 			res.status(statusCodes.SUCCESSFUL).json({ message: defaultSuccessMessage, data });
 		})
