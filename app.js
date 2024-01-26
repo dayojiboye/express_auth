@@ -10,6 +10,7 @@ const indexRouter = require("./routes/index");
 const authRouter = require("./routes/authRoutes");
 const profileRouter = require("./routes/profileRoutes");
 const { validateToken } = require("./middleware/validateTokenHandler");
+const { checkUser } = require("./middleware/checkUserHandler");
 
 const app = express();
 
@@ -34,6 +35,7 @@ mongoose
 	.catch((err) => console.log(err));
 
 // Routes
+app.use("*", checkUser);
 app.use("/", indexRouter);
 app.use(authRouter);
 app.use("/profile", validateToken, profileRouter);

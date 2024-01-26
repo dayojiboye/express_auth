@@ -40,8 +40,7 @@ const userSchema = new mongoose.Schema(
 			required: [true, "Please enter an occupation"],
 		},
 		followers: {
-			type: Array,
-			required: [true],
+			type: [{ name: String, id: String, _id: false }],
 		},
 	},
 	{ timestamps: true }

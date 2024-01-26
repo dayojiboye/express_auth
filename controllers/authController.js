@@ -16,13 +16,8 @@ const createToken = (id) => {
 };
 
 const register = async (req, res) => {
-	// const { firstName, lastName, username, email, password, bio, occupation } = req.body;
-
 	try {
-		const user = await User.create({
-			...req.body,
-			followers: [],
-		});
+		const user = await User.create(req.body);
 		const accessToken = createToken(user._id);
 		// res.cookie("accessToken", accessToken, { httpOnly: true, secure: true, maxAge: maxAge * 1000 });
 		res.status(statusCodes.SUCCESSFUL).json({

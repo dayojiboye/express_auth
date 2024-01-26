@@ -10,6 +10,7 @@ module.exports.statusCodes = {
 module.exports.defaultSuccessMessage = "Request processed successfully";
 module.exports.unauthorizedMessage = "Unauthorized";
 module.exports.badTokenFormatMessage = "Bad Token Format";
+module.exports.serverErrorMessage = "Internal server error";
 
 module.exports.maxAgeMinutes = 15; // 15 minutes
 
