@@ -67,6 +67,23 @@ userSchema.statics.login = async function (email, password) {
 	throw Error("Invalid email");
 };
 
+userSchema.post("findOneAndDelete", function (res) {
+	// console.log(res.id, res._id);
+	User.updateMany(
+		{},
+		{
+			$pull: {
+				followers: {
+					id: res.id,
+				},
+			},
+		},
+		{ new: true, upsert: true }
+	)
+		.then((data) => console.log("Successfully deleted user in all followers array"))
+		.catch((err) => console.log(err));
+});
+
 const User = mongoose.model("user", userSchema);
 
 module.exports = User;

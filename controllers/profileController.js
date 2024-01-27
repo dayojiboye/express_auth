@@ -55,19 +55,24 @@ const followOrUnfollowUser = async (req, res) => {
 
 const deleteAccount = async (req, res) => {
 	const userId = req.params.id;
-	const { _id } = res.locals.user;
+	const { _id } = res.locals.user || {};
 	const { reason } = req.body;
 
-	if (userId !== _id.toString()) {
+	if (!_id || userId !== _id.toString()) {
 		res.status(statusCodes.FORBIDDEN).json({ message: forbiddenErrorMessage });
+		return;
 	}
 
 	if (!reason) {
 		res.status(statusCodes.VALIDATION_ERROR).json({ message: "Reason field is required" });
+		return;
 	}
 
+	// To-Do: Invalidate token after delete
+
 	try {
-		const data = await User.findByIdAndDelete(userId);
+		// const data = await User.findByIdAndDelete(userId);
+		const data = await User.findOneAndDelete({ _id: userId });
 		res.status(statusCodes.SUCCESSFUL).json({
 			message: defaultSuccessMessage,
 			data: {
@@ -75,6 +80,7 @@ const deleteAccount = async (req, res) => {
 			},
 		});
 	} catch (error) {
+		console.log(error);
 		res.status(statusCodes.SERVER_ERROR).json({ message: serverErrorMessage });
 	}
 };
