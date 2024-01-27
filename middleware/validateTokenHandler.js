@@ -1,5 +1,10 @@
 const jwt = require("jsonwebtoken");
-const { statusCodes, unauthorizedMessage, badTokenFormatMessage } = require("../constants");
+const {
+	statusCodes,
+	unauthorizedMessage,
+	badTokenFormatMessage,
+	invalidTokenMessage,
+} = require("../constants");
 
 module.exports.validateToken = function (req, res, next) {
 	let token;
@@ -10,7 +15,7 @@ module.exports.validateToken = function (req, res, next) {
 			jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decodedToken) => {
 				if (err) {
 					if (err.message.includes("jwt expired")) {
-						res.status(statusCodes.UNAUTHORIZED).json({ message: "Invalid token" });
+						res.status(statusCodes.UNAUTHORIZED).json({ message: invalidTokenMessage });
 					} else {
 						res.status(statusCodes.UNAUTHORIZED).json({ message: unauthorizedMessage });
 					}

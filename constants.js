@@ -12,6 +12,7 @@ module.exports.unauthorizedMessage = "Unauthorized";
 module.exports.badTokenFormatMessage = "Bad Token Format";
 module.exports.serverErrorMessage = "Internal server error";
 module.exports.forbiddenErrorMessage = "Forbidden Operation";
+module.exports.invalidTokenMessage = "Invalid token";
 
 module.exports.maxAgeMinutes = 15; // 15 minutes
 

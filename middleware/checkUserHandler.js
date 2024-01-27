@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
+const { statusCodes, invalidTokenMessage } = require("../constants");
 
 module.exports.checkUser = (req, res, next) => {
 	let token;
@@ -14,6 +15,11 @@ module.exports.checkUser = (req, res, next) => {
 					next();
 				} else {
 					let user = await User.findById(decodedToken.id);
+					if (!user) {
+						res.locals.user = null;
+						res.status(statusCodes.UNAUTHORIZED).json({ message: invalidTokenMessage });
+						return;
+					}
 					res.locals.user = user;
 					next();
 				}

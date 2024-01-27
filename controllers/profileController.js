@@ -68,8 +68,6 @@ const deleteAccount = async (req, res) => {
 		return;
 	}
 
-	// To-Do: Invalidate token after delete
-
 	try {
 		// const data = await User.findByIdAndDelete(userId);
 		const data = await User.findOneAndDelete({ _id: userId });
