@@ -1,8 +1,8 @@
-const jwt = require("jsonwebtoken");
-const User = require("../models/user");
-const { statusCodes, invalidTokenMessage } = require("../constants");
+import jwt from "jsonwebtoken";
+import User from "../models/user.js";
+import { statusCodes, invalidTokenMessage } from "../constants.js";
 
-module.exports.checkUser = (req, res, next) => {
+const checkUser = (req, res, next) => {
 	let token;
 	let authHeader = req.headers.Authorization || req.headers.authorization;
 
@@ -33,3 +33,5 @@ module.exports.checkUser = (req, res, next) => {
 		next();
 	}
 };
+
+export default checkUser;

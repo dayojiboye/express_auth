@@ -1,4 +1,4 @@
-module.exports.statusCodes = {
+export const statusCodes = {
 	SUCCESSFUL: 200,
 	VALIDATION_ERROR: 400,
 	UNAUTHORIZED: 401,
@@ -7,18 +7,19 @@ module.exports.statusCodes = {
 	SERVER_ERROR: 500,
 };
 
-module.exports.defaultSuccessMessage = "Request processed successfully";
-module.exports.unauthorizedMessage = "Unauthorized";
-module.exports.badTokenFormatMessage = "Bad Token Format";
-module.exports.serverErrorMessage = "Internal server error";
-module.exports.forbiddenErrorMessage = "Forbidden Operation";
-module.exports.invalidTokenMessage = "Invalid token";
+export const defaultSuccessMessage = "Request processed successfully";
+export const unauthorizedMessage = "Unauthorized";
+export const badTokenFormatMessage = "Bad Token Format";
+export const serverErrorMessage = "Internal server error";
+export const forbiddenErrorMessage = "Forbidden Operation";
+export const invalidTokenMessage = "Invalid token";
+export const userNotFoundMessage = "No user found";
 
-module.exports.maxAgeMinutes = 15; // 15 minutes
+export const maxAgeMinutes = 15; // 15 minutes
 
-module.exports.maxAge = this.maxAgeMinutes * 60; // 900 seconds
+export const maxAge = maxAgeMinutes * 60; // 900 seconds
 
-module.exports.userResponse = function (user) {
+export function userResponse(user) {
 	return {
 		...user.toObject(),
 		_id: undefined,
@@ -26,4 +27,4 @@ module.exports.userResponse = function (user) {
 		password: undefined,
 		__v: undefined,
 	};
-};
+}

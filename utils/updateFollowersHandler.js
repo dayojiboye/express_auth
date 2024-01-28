@@ -1,4 +1,4 @@
-const { followOrUnfollowEnums } = require("../enums");
+import { followOrUnfollowEnums } from "../enums.js";
 
 const updateFollowers = (type, firstName, lastName, _id) => {
 	switch (type) {
@@ -26,4 +26,4 @@ const updateFollowers = (type, firstName, lastName, _id) => {
 	}
 };
 
-module.exports = updateFollowers;
+export default updateFollowers;

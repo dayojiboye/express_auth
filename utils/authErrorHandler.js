@@ -1,49 +1,60 @@
-const authErrors = (err) => {
-	// console.log(err.message, err.code);
+import Joi from "joi";
 
-	let errors = {
-		firstName: "",
-		lastName: "",
-		username: "",
-		email: "",
-		password: "",
-		bio: "",
-		occupation: "",
-	};
-
+export const authErrors = (err) => {
 	// Duplicate error codes
 	if (err.code === 11000) {
-		// Duplicate username error code
+		// Duplicate username error
 		if (err.message.includes("username")) {
-			errors.username = "Username already taken";
-			return Object.values(errors).filter((val) => val)[0];
+			return "Username already taken";
 		}
 
-		// Duplicate email error code
+		// Duplicate email error
 		if (err.message.includes("email")) {
-			errors.email = "Email already taken";
-			return Object.values(errors).filter((val) => val)[0];
+			return "Email already taken";
 		}
 	}
 
-	// Validation errors
-	if (err.message.includes("user validation failed")) {
-		Object.values(err.errors).forEach(({ properties }) => {
-			errors[properties.path] = properties.message;
-		});
+	// Incorrect email error & Incorrect password error
+	if (err.message === "Invalid email" || err.message === "Invalid email or password") {
+		return err.message;
 	}
-
-	// Incorrect email error
-	if (err.message === "Invalid email") {
-		errors.email = err.message;
-	}
-
-	// Incorrect password error
-	if (err.message === "Invalid email or password") {
-		errors.password = err.message;
-	}
-
-	return Object.values(errors).filter((val) => val)[0];
 };
 
-module.exports = authErrors;
+export const registrationSchema = Joi.object({
+	firstName: Joi.string().required().messages({
+		"string.empty": "Please enter a first name",
+	}),
+	lastName: Joi.string().required().messages({
+		"string.empty": "Please enter a last name",
+	}),
+	username: Joi.string().min(6).required().messages({
+		"string.empty": "Please enter a username",
+		"string.min": "Username must be at least 3 characters",
+	}),
+	email: Joi.string().email().required().messages({
+		"string.empty": "Please enter an email",
+		"string.email": "Please enter a valid email",
+	}),
+	password: Joi.string().min(6).required().messages({
+		"string.empty": "Please enter a password",
+		"string.min": "Password must be at least 6 characters",
+	}),
+	bio: Joi.string().max(50).required().messages({
+		"string.empty": "Please enter a bio",
+		"string.max": "Bio must not be more than 50 characters",
+	}),
+	occupation: Joi.string().required().messages({
+		"string.empty": "Please enter an occupation",
+	}),
+});
+
+export const loginSchema = Joi.object({
+	email: Joi.string().email().required().messages({
+		"string.empty": "Please enter an email",
+		"string.email": "Please enter a valid email",
+	}),
+	password: Joi.string().min(6).required().messages({
+		"string.empty": "Please enter a password",
+		"string.min": "Password must be at least 6 characters",
+	}),
+});

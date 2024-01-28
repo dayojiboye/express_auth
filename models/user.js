@@ -1,43 +1,39 @@
-const mongoose = require("mongoose");
-const { isEmail } = require("validator");
-const bcrypt = require("bcrypt");
+import mongoose from "mongoose";
+// import { isEmail } from "validator";
+import bcrypt from "bcrypt";
 
 const userSchema = new mongoose.Schema(
 	{
 		firstName: {
 			type: String,
-			required: [true, "Please enter a first name"],
+			required: [true],
 		},
 		lastName: {
 			type: String,
-			required: [true, "Please enter a last name"],
+			required: [true],
 		},
 		username: {
 			type: String,
-			required: [true, "Please enter a username"],
+			required: [true],
 			unique: true,
-			minlength: [6, "Username must be at least 3 characters"],
 		},
 		email: {
 			type: String,
-			required: [true, "Please enter an email"],
 			unique: true,
 			lowercase: true,
-			validate: [isEmail, "Please enter a valid email"],
+			required: [true],
 		},
 		password: {
 			type: String,
-			required: [true, "Please enter a password"],
-			minlength: [6, "Password must be at least 6 characters"],
+			required: [true],
 		},
 		bio: {
 			type: String,
-			required: [true, "Please enter a bio"],
-			maxlength: [50, "Bio must not be more than 50 characters"],
+			required: [true],
 		},
 		occupation: {
 			type: String,
-			required: [true, "Please enter an occupation"],
+			required: [true],
 		},
 		followers: {
 			type: [{ name: String, id: String, _id: false }],
@@ -78,7 +74,7 @@ userSchema.post("findOneAndDelete", function (res) {
 				},
 			},
 		},
-		{ new: true, upsert: true }
+		{ new: true }
 	)
 		.then((data) => console.log("Successfully deleted user in all followers array"))
 		.catch((err) => console.log(err));
@@ -86,4 +82,4 @@ userSchema.post("findOneAndDelete", function (res) {
 
 const User = mongoose.model("user", userSchema);
 
-module.exports = User;
+export default User;

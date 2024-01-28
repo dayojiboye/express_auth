@@ -1,15 +1,23 @@
-const {
+import Joi from "joi";
+import {
 	userResponse,
 	statusCodes,
 	defaultSuccessMessage,
 	forbiddenErrorMessage,
 	serverErrorMessage,
-} = require("../constants");
-const { followOrUnfollowEnums } = require("../enums");
-const User = require("../models/user");
-const updateFollowers = require("../utils/updateFollowersHandler");
+	userNotFoundMessage,
+} from "../constants.js";
+import { followOrUnfollowEnums } from "../enums.js";
+import User from "../models/user.js";
+import updateFollowers from "../utils/updateFollowersHandler.js";
 
-const getUserById = async (req, res) => {
+const deleteAccountSchema = Joi.object({
+	reason: Joi.string().required().messages({
+		"string.empty": "Reason field is required",
+	}),
+});
+
+export const getUserById = async (req, res) => {
 	const userId = req.params.id;
 
 	try {
@@ -20,11 +28,11 @@ const getUserById = async (req, res) => {
 				.json({ message: defaultSuccessMessage, data: userResponse(user) });
 		}
 	} catch (error) {
-		res.status(statusCodes.NOT_FOUND).json({ message: "No user found" });
+		res.status(statusCodes.NOT_FOUND).json({ message: userNotFoundMessage });
 	}
 };
 
-const followOrUnfollowUser = async (req, res) => {
+export const followOrUnfollowUser = async (req, res) => {
 	const userId = req.params.id;
 	const { type } = req.query;
 	const { firstName, lastName, _id } = res.locals.user;
@@ -37,34 +45,33 @@ const followOrUnfollowUser = async (req, res) => {
 	if (userId === _id.toString()) {
 		res
 			.status(statusCodes.FORBIDDEN)
-			.json({ message: "User can not follow or unfollow themselves" });
+			.json({ message: "Users can not follow or unfollow their own selves" });
 		return;
 	}
 
 	User.findByIdAndUpdate(userId, updateFollowers(type, firstName, lastName, _id), {
 		new: true,
-		upsert: true,
 	})
 		.then((data) => {
 			res.status(statusCodes.SUCCESSFUL).json({ message: defaultSuccessMessage, data });
 		})
 		.catch((err) => {
-			res.status(statusCodes.NOT_FOUND).json({ message: "User not found" });
+			res.status(statusCodes.NOT_FOUND).json({ message: userNotFoundMessage });
 		});
 };
 
-const deleteAccount = async (req, res) => {
+export const deleteAccount = async (req, res) => {
 	const userId = req.params.id;
 	const { _id } = res.locals.user || {};
-	const { reason } = req.body;
+	const { error } = deleteAccountSchema.validate(req.body);
 
 	if (!_id || userId !== _id.toString()) {
 		res.status(statusCodes.FORBIDDEN).json({ message: forbiddenErrorMessage });
 		return;
 	}
 
-	if (!reason) {
-		res.status(statusCodes.VALIDATION_ERROR).json({ message: "Reason field is required" });
+	if (error) {
+		res.status(statusCodes.VALIDATION_ERROR).json({ message: error.details[0].message });
 		return;
 	}
 
@@ -78,13 +85,6 @@ const deleteAccount = async (req, res) => {
 			},
 		});
 	} catch (error) {
-		console.log(error);
 		res.status(statusCodes.SERVER_ERROR).json({ message: serverErrorMessage });
 	}
-};
-
-module.exports = {
-	getUserById,
-	followOrUnfollowUser,
-	deleteAccount,
 };

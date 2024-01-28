@@ -1,18 +1,23 @@
-const createError = require("http-errors");
-const express = require("express");
-const mongoose = require("mongoose");
-const path = require("path");
-const cookieParser = require("cookie-parser");
-const logger = require("morgan");
-require("dotenv").config();
+import createError from "http-errors";
+import express from "express";
+import mongoose from "mongoose";
+import path from "path";
+import cookieParser from "cookie-parser";
+import logger from "morgan";
+import dotenv from "dotenv";
+import { fileURLToPath } from "url";
 
-const indexRouter = require("./routes/index");
-const authRouter = require("./routes/authRoutes");
-const profileRouter = require("./routes/profileRoutes");
-const { validateToken } = require("./middleware/validateTokenHandler");
-const { checkUser } = require("./middleware/checkUserHandler");
+import indexRouter from "./routes/index.js";
+import authRouter from "./routes/authRoutes.js";
+import profileRouter from "./routes/profileRoutes.js";
+import validateToken from "./middleware/validateTokenHandler.js";
+import checkUser from "./middleware/checkUserHandler.js";
 
 const app = express();
+
+dotenv.config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // View engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -56,4 +61,4 @@ app.use(function (err, req, res, next) {
 	res.render("error");
 });
 
-module.exports = app;
+export default app;

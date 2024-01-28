@@ -1,13 +1,13 @@
-const jwt = require("jsonwebtoken");
-const {
+import jwt from "jsonwebtoken";
+import {
 	maxAge,
 	statusCodes,
 	maxAgeMinutes,
 	defaultSuccessMessage,
 	userResponse,
-} = require("../constants");
-const authErrors = require("../utils/authErrorHandler");
-const User = require("../models/user");
+} from "../constants.js";
+import { registrationSchema, loginSchema, authErrors } from "../utils/authErrorHandler.js";
+import User from "../models/user.js";
 
 const createToken = (id) => {
 	return jwt.sign({ id }, process.env.ACCESS_TOKEN_SECRET, {
@@ -15,7 +15,14 @@ const createToken = (id) => {
 	});
 };
 
-const register = async (req, res) => {
+export const register = async (req, res) => {
+	const { error } = registrationSchema.validate(req.body);
+
+	if (error) {
+		res.status(statusCodes.VALIDATION_ERROR).json({ message: error.details[0].message });
+		return;
+	}
+
 	try {
 		const user = await User.create(req.body);
 		const accessToken = createToken(user._id);
@@ -36,11 +43,12 @@ const register = async (req, res) => {
 	}
 };
 
-const login = async (req, res) => {
+export const login = async (req, res) => {
 	const { email, password } = req.body;
+	const { error } = loginSchema.validate(req.body);
 
-	if (!email || !password) {
-		res.status(statusCodes.VALIDATION_ERROR).json({ message: "All fields are required" });
+	if (error) {
+		res.status(statusCodes.VALIDATION_ERROR).json({ message: error.details[0].message });
 		return;
 	}
 
@@ -62,9 +70,4 @@ const login = async (req, res) => {
 		const validationError = authErrors(error);
 		res.status(statusCodes.VALIDATION_ERROR).json({ message: validationError });
 	}
-};
-
-module.exports = {
-	register,
-	login,
 };

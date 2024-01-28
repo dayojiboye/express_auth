@@ -1,9 +1,9 @@
-const express = require("express");
-const {
+import express from "express";
+import {
 	getUserById,
 	followOrUnfollowUser,
 	deleteAccount,
-} = require("../controllers/profileController");
+} from "../controllers/profileController.js";
 
 const router = express.Router();
 
@@ -13,4 +13,4 @@ router.put("/:id", followOrUnfollowUser);
 
 router.delete("/:id", deleteAccount);
 
-module.exports = router;
+export default router;

@@ -1,12 +1,12 @@
-const jwt = require("jsonwebtoken");
-const {
+import jwt from "jsonwebtoken";
+import {
 	statusCodes,
 	unauthorizedMessage,
 	badTokenFormatMessage,
 	invalidTokenMessage,
-} = require("../constants");
+} from "../constants.js";
 
-module.exports.validateToken = function (req, res, next) {
+const validateToken = function (req, res, next) {
 	let token;
 	let authHeader = req.headers.Authorization || req.headers.authorization;
 	if (authHeader && authHeader.startsWith("Bearer")) {
@@ -31,3 +31,5 @@ module.exports.validateToken = function (req, res, next) {
 		res.status(statusCodes.FORBIDDEN).json({ message: badTokenFormatMessage });
 	}
 };
+
+export default validateToken;
